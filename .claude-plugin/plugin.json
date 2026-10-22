@@ -1,0 +1,16 @@
+{
+  "name": "agent-chrome",
+  "version": "1.0.0",
+  "description": "Multi-LLM browser consensus council powered by your visible desktop Chrome session. Zero API costs, zero GPU VRAM.",
+  "author": {
+    "name": "Agent Chrome Contributors"
+  },
+  "keywords": ["browser", "llm", "cdp", "chatgpt", "claude", "deepseek", "gemini", "consensus", "multi-agent"],
+  "skills": [
+    {
+      "name": "agent-chrome",
+      "path": "plugins/agent-chrome/skills/agent-chrome/SKILL.md",
+      "description": "Query your live browser-session LLM council (ChatGPT, Claude Sonnet, DeepSeek R1, Gemini, Z.ai) via Chrome CDP."
+    }
+  ]
+}

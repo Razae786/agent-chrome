@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Browser profiles & session data (CRITICAL: NEVER COMMIT USER SESSIONS)
+profile/
+user_data/
+ai-agent-browser-profile/
+*.lock
+LOCK
+Singleton*
+*.dmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

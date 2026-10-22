@@ -1,0 +1,37 @@
+{
+  "web-claude-sonnet": {
+    "name": "Claude Sonnet (Web)",
+    "url_match": "claude.ai",
+    "default_url": "https://claude.ai",
+    "input_selector": "div.ProseMirror, div[contenteditable='true']",
+    "response_selector": "div.font-claude-message, div[data-is-streaming='false']"
+  },
+  "web-deepseek-r1": {
+    "name": "DeepSeek R1 (Web)",
+    "url_match": "chat.deepseek.com",
+    "default_url": "https://chat.deepseek.com",
+    "input_selector": "textarea[placeholder*='Message DeepSeek'], textarea",
+    "response_selector": "div.ds-markdown"
+  },
+  "web-chatgpt": {
+    "name": "ChatGPT (Web)",
+    "url_match": "chatgpt.com",
+    "default_url": "https://chatgpt.com",
+    "input_selector": "div.ProseMirror, div[contenteditable='true']",
+    "response_selector": "div[class*='[--entity-prose-inset'], div[class*='entity-prose']"
+  },
+  "web-gemini": {
+    "name": "Google Gemini (Web)",
+    "url_match": "gemini.google.com",
+    "default_url": "https://gemini.google.com",
+    "input_selector": "div.ql-editor, div[contenteditable='true']",
+    "response_selector": "message-content"
+  },
+  "web-zai": {
+    "name": "Z.ai GLM-5.3 (Web)",
+    "url_match": "chat.z.ai",
+    "default_url": "https://chat.z.ai",
+    "input_selector": "textarea#chat-input, textarea",
+    "response_selector": "div.markdown-prose, div.chat-content"
+  }
+}
