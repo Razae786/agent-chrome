@@ -36,29 +36,23 @@ Coding agents (Claude Code, Antigravity, Codex, Cursor, OpenCode) are only as re
 
 ```mermaid
 flowchart TD
-    subgraph Host [Developer Desktop]
-        USER["User (Eyes on Screen)"]
-        AGENT["AI Coding Agent (Claude Code / Antigravity / Codex)"]
-        
-        subgraph Visible Browser [Agent Chrome :9222 CDP]
-            T1["ChatGPT Tab"]
-            T2["Claude Sonnet Tab"]
-            T3["DeepSeek R1 Tab"]
-            T4["Google Gemini Tab"]
-            T5["Z.ai Tab"]
-        end
-        
-        subgraph Engine [Local Runtime]
-            BRIDGE["bridge_server.py (:8000)<br/>OpenAI-compatible REST API"]
-            COUNCIL["council.py<br/>Consensus & Discrepancy Engine"]
-        end
+    USER["User (Eyes on Screen)"]
+    AGENT["AI Coding Agent (Claude Code / Antigravity / Cursor)"]
+
+    subgraph BROWSER ["Agent Chrome (:9222 CDP)"]
+        TABS["Live Web Sessions<br/>ChatGPT • Claude • DeepSeek • Gemini • Z.ai"]
     end
 
-    USER <-->|"Visual Observation & Manual Chat"| Visible Browser
+    subgraph ENGINE ["Local Runtime"]
+        BRIDGE["bridge_server.py (:8000)<br/>OpenAI-compatible REST API"]
+        COUNCIL["council.py<br/>Consensus & Discrepancy Engine"]
+    end
+
+    USER <-->|"Visual Observation & Manual Chat"| TABS
     AGENT -->|"POST /v1/chat/completions"| BRIDGE
     AGENT -->|"Multi-Model Consensus"| COUNCIL
     COUNCIL --> BRIDGE
-    BRIDGE -->|"Chrome DevTools Protocol"| Visible Browser
+    BRIDGE -->|"Chrome DevTools Protocol (CDP)"| TABS
 ```
 
 ---
@@ -67,7 +61,7 @@ flowchart TD
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/<your-username>/agent-chrome.git
+git clone https://github.com/Razae786/agent-chrome.git
 cd agent-chrome
 
 # Install dependencies

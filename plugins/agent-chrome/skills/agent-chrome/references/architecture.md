@@ -2,29 +2,23 @@
 
 ```mermaid
 flowchart TD
-    subgraph Host [Developer Desktop]
-        USER["User (Eyes on Screen)"]
-        AGENT["AI Agent (Antigravity / Claude Code / Codex)"]
-        
-        subgraph Visible Browser [Agent Chrome :9222 CDP]
-            T1["ChatGPT Tab"]
-            T2["Claude Sonnet Tab"]
-            T3["DeepSeek R1 Tab"]
-            T4["Google Gemini Tab"]
-            T5["Z.ai Tab"]
-        end
-        
-        subgraph Engine [Local Runtime]
-            BRIDGE["bridge_server.py (:8000)<br/>OpenAI-compatible REST API"]
-            COUNCIL["council.py<br/>Consensus & Discrepancy Engine"]
-        end
+    USER["User (Eyes on Screen)"]
+    AGENT["AI Coding Agent (Claude Code / Antigravity / Cursor)"]
+
+    subgraph BROWSER ["Agent Chrome (:9222 CDP)"]
+        TABS["Live Web Sessions<br/>ChatGPT • Claude • DeepSeek • Gemini • Z.ai"]
     end
 
-    USER <-->|"Visual Feedback & Interaction"| Visible Browser
+    subgraph ENGINE ["Local Runtime"]
+        BRIDGE["bridge_server.py (:8000)<br/>OpenAI-compatible REST API"]
+        COUNCIL["council.py<br/>Consensus & Discrepancy Engine"]
+    end
+
+    USER <-->|"Visual Feedback & Interaction"| TABS
     AGENT -->|"POST /v1/chat/completions"| BRIDGE
     AGENT -->|"CLI Consensus Query"| COUNCIL
     COUNCIL --> BRIDGE
-    BRIDGE -->|"CDP DevTools Protocol"| Visible Browser
+    BRIDGE -->|"Chrome DevTools Protocol (CDP)"| TABS
 ```
 
 ### Key Components
