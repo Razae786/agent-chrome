@@ -118,11 +118,12 @@ class Message(BaseModel):
 class ChatCompletionRequest(BaseModel):
     model: str
     messages: List[Message]
+    files: Optional[List[str]] = []
     stream: bool = False
     temperature: Optional[float] = 0.7
 
 
-async def query_browser_tab(model_key: str, prompt: str, timeout: int = 60) -> str:
+async def query_browser_tab(model_key: str, prompt: str, files: Optional[List[str]] = None, timeout: int = 60) -> str:
     global PROVIDER_TABS, PROVIDER_LOCKS
     if model_key not in PROVIDER_TABS:
         PROVIDER_TABS = load_providers()
@@ -168,7 +169,46 @@ async def query_browser_tab(model_key: str, prompt: str, timeout: int = 60) -> s
             baseline_count = baseline_info.get("count", 0)
             baseline_text = baseline_info.get("text", "")
 
-            # Focus and enter prompt
+            # 1. Attach Deliverables (Images, Docs, PPTX, PDFs) if provided
+            if files:
+                valid_files = [os.path.abspath(f) for f in files if os.path.exists(f)]
+                if not valid_files:
+                    print(f"[Bridge] Warning: No existing files found in {files}")
+                else:
+                    print(f"[Bridge] Attaching {len(valid_files)} deliverable(s) to {model_key}...")
+                    try:
+                        if config.get("upload_trigger_selector"):
+                            # Menu-triggered uploads (e.g. Gemini)
+                            trigger_btn = target_page.locator(config["upload_trigger_selector"]).first
+                            if await trigger_btn.count() > 0:
+                                await trigger_btn.click()
+                                await asyncio.sleep(0.6)
+                                if config.get("file_chooser_selector"):
+                                    chooser_item = target_page.locator(config["file_chooser_selector"]).first
+                                    if await chooser_item.count() > 0:
+                                        async with target_page.expect_file_chooser(timeout=4000) as fc_info:
+                                            await chooser_item.click()
+                                        fc = await fc_info.value
+                                        await fc.set_files(valid_files)
+                                else:
+                                    inps = await target_page.locator(config.get("file_input_selector", "input[type='file']")).all()
+                                    if inps:
+                                        await inps[0].set_input_files(valid_files)
+                        else:
+                            # Direct file inputs (Claude, ChatGPT, DeepSeek, Z.ai)
+                            inps = await target_page.locator(config.get("file_input_selector", "input[type='file']")).all()
+                            if inps:
+                                # For ChatGPT, last input is general deliverables/files
+                                target_inp = inps[-1] if ("chatgpt" in model_key and len(inps) > 1) else inps[0]
+                                await target_inp.set_input_files(valid_files)
+                            else:
+                                print(f"[Bridge] Warning: No file input found on {model_key}")
+                        # Wait for file upload & preview chips to settle
+                        await asyncio.sleep(2.5)
+                    except Exception as attach_err:
+                        print(f"[Bridge] Error attaching files to {model_key}: {attach_err}")
+
+            # 2. Focus and enter prompt
             input_box = target_page.locator(config["input_selector"]).first
             await input_box.wait_for(state="visible", timeout=8000)
             await input_box.click()
@@ -180,32 +220,53 @@ async def query_browser_tab(model_key: str, prompt: str, timeout: int = 60) -> s
                 await target_page.keyboard.insert_text(prompt)
 
             await asyncio.sleep(0.3)
-            await target_page.keyboard.press("Enter")
+
+            # 3. Submit query (prefer Send button if present, else Enter)
+            send_btn = None
+            if config.get("send_button_selector"):
+                send_btn = target_page.locator(config["send_button_selector"]).first
+            if send_btn and await send_btn.count() > 0 and await send_btn.is_visible() and await send_btn.is_enabled():
+                try:
+                    await send_btn.click()
+                except Exception:
+                    await target_page.keyboard.press("Enter")
+            else:
+                await target_page.keyboard.press("Enter")
 
             # Polling: wait until new response appears and stabilizes
             last_text = ""
             stable_ticks = 0
             start_wait = time.time()
+            stop_sel = config.get("stop_selector", "")
 
             while (time.time() - start_wait) < timeout:
                 await asyncio.sleep(1.0)
                 try:
                     curr_info = await target_page.evaluate(f"""() => {{
                         const msgs = Array.from(document.querySelectorAll("{resp_sel}"));
+                        const stopEl = "{stop_sel}" ? document.querySelector("{stop_sel}") : null;
+                        const isGenerating = stopEl !== null && stopEl.offsetParent !== null;
                         return {{
                             count: msgs.length,
-                            text: msgs.length > 0 ? (msgs[msgs.length - 1].innerText || '').trim() : ''
+                            text: msgs.length > 0 ? (msgs[msgs.length - 1].innerText || '').trim() : '',
+                            is_generating: isGenerating
                         }};
                     }}""")
                     curr_count = curr_info.get("count", 0)
                     curr_text = curr_info.get("text", "")
+                    is_generating = curr_info.get("is_generating", False)
                 except Exception:
                     curr_count = 0
                     curr_text = ""
+                    is_generating = False
 
                 is_new = (curr_count > baseline_count) or (curr_text and curr_text != baseline_text)
                 if is_new and curr_text:
-                    if curr_text == last_text:
+                    if is_generating:
+                        # Actively generating or deep thinking, do not stop early
+                        stable_ticks = 0
+                        last_text = curr_text
+                    elif curr_text == last_text:
                         stable_ticks += 1
                         if stable_ticks >= 2:
                             return curr_text
@@ -227,7 +288,7 @@ async def query_browser_tab(model_key: str, prompt: str, timeout: int = 60) -> s
 @app.post("/v1/chat/completions")
 async def chat_completions(req: ChatCompletionRequest):
     formatted_prompt = "\n".join([f"{m.role.upper()}: {m.content}" for m in req.messages])
-    reply_text = await query_browser_tab(req.model, formatted_prompt)
+    reply_text = await query_browser_tab(req.model, formatted_prompt, files=req.files)
 
     return {
         "id": f"chatcmpl-{uuid.uuid4()}",

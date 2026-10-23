@@ -44,8 +44,11 @@ python engine/bridge_server.py
 # Query all 5 models simultaneously
 python engine/council.py -q "What are the edge cases of using an SQLite WAL mode under concurrent multiprocessing?"
 
-# Query specific models
-python engine/council.py -m web-claude-sonnet web-deepseek-r1 -q "Refactor this function to be O(n)"
+# Query with deliverable attachments (images, PPTX, PDFs, documents, code)
+python engine/council.py -q "Cross-examine this architecture diagram and slide deck" -f arch.png slides.pptx
+
+# Query specific models with deliverables
+python engine/council.py -m web-claude-sonnet web-deepseek-r1 -q "Refactor this function to be O(n)" -f legacy_code.py
 ```
 
 ### Option B: Query via OpenAI Client / HTTP
@@ -77,6 +80,7 @@ print(response.choices[0].message.content)
 | `web-chatgpt` | OpenAI ChatGPT | `chatgpt.com` |
 | `web-gemini` | Google Gemini | `gemini.google.com` |
 | `web-zai` | Z.ai GLM-5.3 | `chat.z.ai` |
+| `web-kimi` | Moonshot Kimi K3 | `kimi.ai` |
 
 To add custom providers or change DOM selectors, edit [`engine/selectors.json`](file:///engine/selectors.json).
 

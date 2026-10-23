@@ -21,7 +21,8 @@ DEFAULT_MODELS = [
     "web-deepseek-r1",
     "web-chatgpt",
     "web-gemini",
-    "web-zai"
+    "web-zai",
+    "web-kimi"
 ]
 
 
@@ -65,11 +66,12 @@ def check_status() -> dict:
     return status
 
 
-def query_single_model(model: str, prompt: str, timeout: int = 60) -> dict:
+def query_single_model(model: str, prompt: str, files: list = None, timeout: int = 60) -> dict:
     try:
         payload = {
             "model": model,
             "messages": [{"role": "user", "content": prompt}],
+            "files": files or [],
             "max_tokens": 1024
         }
         res = requests.post(BRIDGE_URL, json=payload, timeout=timeout)
@@ -82,17 +84,20 @@ def query_single_model(model: str, prompt: str, timeout: int = 60) -> dict:
         return {"ok": False, "error": str(e)}
 
 
-def query_council(prompt: str, models: list = None, timeout: int = 60) -> dict:
+def query_council(prompt: str, files: list = None, models: list = None, timeout: int = 60) -> dict:
     target_models = models or DEFAULT_MODELS
     results = {}
     print(f"\n[Council] Querying {len(target_models)} browser models simultaneously:")
     print("  Models:", ", ".join(target_models))
-    print(f"  Prompt: {prompt[:80]}...\n")
+    print(f"  Prompt: {prompt[:80]}...")
+    if files:
+        print(f"  Deliverables attached ({len(files)}): {', '.join(files)}")
+    print()
 
     for model in target_models:
         print(f"  --> Dispatching to {model}...")
         t0 = time.time()
-        res = query_single_model(model, prompt, timeout=timeout)
+        res = query_single_model(model, prompt, files=files, timeout=timeout)
         elapsed = round(time.time() - t0, 1)
         if res.get("ok"):
             text = res["response"]
@@ -110,6 +115,7 @@ def main():
     parser = argparse.ArgumentParser(description="Agent Chrome — Multi-LLM Consensus Council")
     parser.add_argument("--status", action="store_true", help="Check Agent Chrome & Bridge health")
     parser.add_argument("--query", "-q", type=str, help="Prompt to dispatch to the model council")
+    parser.add_argument("--files", "-f", nargs="+", help="Deliverable files to attach (images, PDF, PPTX, DOCX, TXT)")
     parser.add_argument("--models", "-m", nargs="+", help="Specific models to query")
     parser.add_argument("--timeout", "-t", type=int, default=60, help="Per-model timeout in seconds")
     args = parser.parse_args()
@@ -126,7 +132,7 @@ def main():
             print("Please open Agent Chrome from your desktop so you can see your live tabs.")
             sys.exit(1)
 
-        res = query_council(args.query, models=args.models, timeout=args.timeout)
+        res = query_council(args.query, files=args.files, models=args.models, timeout=args.timeout)
         print("\n=== COUNCIL CONSENSUS RESPONSES ===")
         print(json.dumps(res, indent=2))
         return

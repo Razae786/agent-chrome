@@ -4,34 +4,62 @@
     "url_match": "claude.ai",
     "default_url": "https://claude.ai",
     "input_selector": "div.ProseMirror, div[contenteditable='true']",
-    "response_selector": "div.font-claude-message, div[data-is-streaming='false']"
+    "response_selector": "div.font-claude-message, div[data-is-streaming='false']",
+    "file_input_selector": "input[type='file']",
+    "send_button_selector": "button[aria-label*='Send'], button[data-testid='send-button']",
+    "stop_selector": "button[aria-label*='Stop']"
   },
   "web-deepseek-r1": {
     "name": "DeepSeek R1 (Web)",
     "url_match": "chat.deepseek.com",
     "default_url": "https://chat.deepseek.com",
     "input_selector": "textarea[placeholder*='Message DeepSeek'], textarea",
-    "response_selector": "div.ds-markdown"
+    "response_selector": "div.ds-markdown",
+    "file_input_selector": "input[type='file']",
+    "send_button_selector": "div[role='button']:has(svg), button:has(svg)",
+    "stop_selector": "div.ds-stop-button, button[aria-label*='Stop']"
   },
   "web-chatgpt": {
     "name": "ChatGPT (Web)",
     "url_match": "chatgpt.com",
     "default_url": "https://chatgpt.com",
     "input_selector": "div.ProseMirror, div[contenteditable='true']",
-    "response_selector": "div[class*='[--entity-prose-inset'], div[class*='entity-prose']"
+    "response_selector": "div[class*='[--entity-prose-inset'], div[class*='entity-prose']",
+    "file_input_selector": "input[type='file']",
+    "send_button_selector": "button[data-testid='send-button'], button[aria-label*='Send']",
+    "stop_selector": "button[data-testid='stop-button'], button[aria-label*='Stop']"
   },
   "web-gemini": {
     "name": "Google Gemini (Web)",
     "url_match": "gemini.google.com",
     "default_url": "https://gemini.google.com",
     "input_selector": "div.ql-editor, div[contenteditable='true']",
-    "response_selector": "message-content"
+    "response_selector": "message-content",
+    "file_input_selector": "input[type='file']",
+    "upload_trigger_selector": "button[aria-label*='Upload & tools'], button[aria-label*='tools']",
+    "file_chooser_selector": "button:has-text('Upload files'), [role='menuitem']:has-text('Upload files')",
+    "send_button_selector": "button[aria-label*='Send'], button.send-button",
+    "stop_selector": "button[aria-label*='Stop']"
   },
   "web-zai": {
     "name": "Z.ai GLM-5.3 (Web)",
     "url_match": "chat.z.ai",
     "default_url": "https://chat.z.ai",
     "input_selector": "textarea#chat-input, textarea",
-    "response_selector": "div.markdown-prose, div.chat-content"
+    "response_selector": "div.chat-assistant",
+    "file_input_selector": "input[type='file']",
+    "send_button_selector": "button#send-message-button, button.sendMessageButton",
+    "stop_selector": "button#stop-message-button, button[aria-label*='Stop'], button:has(.lucide-square)"
+  },
+  "web-kimi": {
+    "name": "Moonshot Kimi K3 (Web)",
+    "url_match": "kimi.ai",
+    "default_url": "https://www.kimi.ai",
+    "input_selector": "div.chat-input-editor, [contenteditable='true']",
+    "response_selector": "div.segment-assistant",
+    "file_input_selector": "input[type='file']",
+    "upload_trigger_selector": "div.toolkit-trigger-btn, div[aria-label*='Upload']",
+    "send_button_selector": "div.send-button-container:not(.disabled), div[class*='send-button']:not(.disabled)",
+    "stop_selector": "div[class*='stop-button'], div.stop-button-container"
   }
 }

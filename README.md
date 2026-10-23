@@ -5,6 +5,8 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 [![Compatible Agents](https://img.shields.io/badge/agents-Claude%20Code%20%7C%20Antigravity%20%7C%20Codex%20%7C%20Cursor-green.svg)]()
 
+![Agent Chrome Banner](assets/banner.jpg)
+
 > **An open agent skill that turns your existing logged-in browser tabs into a zero-cost Multi-LLM Consensus Council.**  
 > Zero API keys. Zero token bills. Zero GPU VRAM. 100% visible on your desktop.
 
@@ -23,7 +25,8 @@ Coding agents (Claude Code, Antigravity, Codex, Cursor, OpenCode) are only as re
 
 ## Key Features
 
-- 🎯 **Frontier 5-Model Consensus**: Queries **Claude Sonnet 3.5/5.5**, **DeepSeek R1**, **ChatGPT**, **Google Gemini**, and **Z.ai GLM-5.3** in parallel or sequence.
+- 🎯 **Frontier 6-Model Consensus**: Queries **Claude Sonnet 3.5/5.5**, **DeepSeek R1**, **ChatGPT**, **Google Gemini**, **Z.ai GLM-5.3**, and **Moonshot Kimi K3** in parallel or sequence.
+- 📎 **Multimodal Deliverable Attachments**: Send images (`.png`, `.jpg`), documents (`.pdf`, `.docx`), slide decks (`.pptx`), spreadsheets (`.xlsx`, `.csv`), and code files directly to all models in your browser.
 - 👁️ **100% Visible & Unrestricted**: Agent Chrome is a normal, visible desktop browser window. No hidden background processes. You can inspect tabs, click around, and chat yourself at any time.
 - 💰 **Zero API Costs**: Uses your existing browser logins. No credit card, no prepaid tokens, no rate surprise.
 - 🧊 **Zero Local GPU VRAM**: Runs entirely inside Chrome renderers or remote provider servers. Leaves 100% of your RTX / Apple Silicon GPU free.
@@ -92,8 +95,11 @@ The server will connect over CDP to `127.0.0.1:9222` and start listening on `htt
 # Query all 5 models simultaneously
 python engine/council.py -q "What are the common failure modes of SQLite WAL mode in multiprocessing?"
 
-# Query specific models
-python engine/council.py -m web-claude-sonnet web-deepseek-r1 -q "Write a TypeScript debounce function with immediate trigger"
+# Query with deliverable attachments (images, PPTX, PDFs, documents)
+python engine/council.py -q "Audit this slide deck and architecture diagram for inconsistencies" -f presentation.pptx diagram.png
+
+# Query specific models with deliverables
+python engine/council.py -m web-claude-sonnet web-deepseek-r1 -q "Review this specification document" -f spec.pdf
 ```
 
 ---
@@ -139,6 +145,7 @@ Point your local model configuration or custom AI provider to:
 | `web-chatgpt` | OpenAI ChatGPT | `chatgpt.com` |
 | `web-gemini` | Google Gemini | `gemini.google.com` |
 | `web-zai` | Z.ai GLM-5.3 | `chat.z.ai` |
+| `web-kimi` | Moonshot Kimi K3 | `kimi.ai` |
 
 Want to add another model (e.g. Grok, Le Chat, HuggingChat)? Simply add an entry to [`engine/selectors.json`](engine/selectors.json) with its URL match and DOM selectors!
 
