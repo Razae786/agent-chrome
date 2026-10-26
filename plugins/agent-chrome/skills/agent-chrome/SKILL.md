@@ -41,14 +41,17 @@ python engine/bridge_server.py
 
 ### Option A: Query the CLI
 ```bash
-# Query all 5 models simultaneously
+# Query all 6 models simultaneously
 python engine/council.py -q "What are the edge cases of using an SQLite WAL mode under concurrent multiprocessing?"
 
-# Query with deliverable attachments (images, PPTX, PDFs, documents, code)
-python engine/council.py -q "Cross-examine this architecture diagram and slide deck" -f arch.png slides.pptx
+# Run Hostile Technical Audit (strips politeness, hunts fatal flaws)
+python engine/council.py -q "Audit our memory cascade architecture" --audit
 
-# Query specific models with deliverables
-python engine/council.py -m web-claude-sonnet web-deepseek-r1 -q "Refactor this function to be O(n)" -f legacy_code.py
+# Audit + Automated 3-Part Consensus Synthesis
+python engine/council.py -q "Review this database migration strategy" --audit --synthesize
+
+# Query with deliverable attachments (images, PPTX, PDFs, documents, code)
+python engine/council.py -q "Cross-examine this architecture diagram and slide deck" -f arch.png slides.pptx --audit
 ```
 
 ### Option B: Query via OpenAI Client / HTTP

@@ -26,6 +26,8 @@ Coding agents (Claude Code, Antigravity, Codex, Cursor, OpenCode) are only as re
 ## Key Features
 
 - 🎯 **Frontier 6-Model Consensus**: Queries **Claude Sonnet 3.5/5.5**, **DeepSeek R1**, **ChatGPT**, **Google Gemini**, **Z.ai GLM-5.3**, and **Moonshot Kimi K3** in parallel or sequence.
+- 🔥 **Hostile Technical Audit (`--audit`)**: Strips LLM politeness and "yes-man" sycophancy. Forces all models into adversarial auditor mode to uncover fatal bugs, bottlenecks, and unhandled edge cases.
+- 🏆 **Automated Consensus Synthesis (`--synthesize`)**: Cross-examines all outputs and delivers a 3-part Verdict: **Consensus Truth**, **Clashing Contradictions**, and the **Winning Synthesized Solution**.
 - 📎 **Multimodal Deliverable Attachments**: Send images (`.png`, `.jpg`), documents (`.pdf`, `.docx`), slide decks (`.pptx`), spreadsheets (`.xlsx`, `.csv`), and code files directly to all models in your browser.
 - 👁️ **100% Visible & Unrestricted**: Agent Chrome is a normal, visible desktop browser window. No hidden background processes. You can inspect tabs, click around, and chat yourself at any time.
 - 💰 **Zero API Costs**: Uses your existing browser logins. No credit card, no prepaid tokens, no rate surprise.
@@ -92,14 +94,17 @@ The server will connect over CDP to `127.0.0.1:9222` and start listening on `htt
 
 ### 5. Query the Consensus Council
 ```bash
-# Query all 5 models simultaneously
+# Query all 6 models simultaneously
 python engine/council.py -q "What are the common failure modes of SQLite WAL mode in multiprocessing?"
 
-# Query with deliverable attachments (images, PPTX, PDFs, documents)
-python engine/council.py -q "Audit this slide deck and architecture diagram for inconsistencies" -f presentation.pptx diagram.png
+# Run Hostile Technical Audit (strips politeness, hunts fatal bugs)
+python engine/council.py -q "Audit our edge caching architecture for memory leaks" --audit
 
-# Query specific models with deliverables
-python engine/council.py -m web-claude-sonnet web-deepseek-r1 -q "Review this specification document" -f spec.pdf
+# Audit + Automated 3-Part Consensus Synthesis (Consensus Truth, Contradictions, Winning Fix)
+python engine/council.py -q "Review this database migration strategy" --audit --synthesize
+
+# Query with deliverable attachments (images, PPTX, PDFs, documents)
+python engine/council.py -q "Expose all weaknesses in this slide deck" -f defense.pptx diagram.png --audit
 ```
 
 ---
